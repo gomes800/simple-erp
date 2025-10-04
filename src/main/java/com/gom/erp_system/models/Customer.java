@@ -1,5 +1,6 @@
 package com.gom.erp_system.models;
 
+import com.gom.erp_system.models.dto.CreateCustomerDTO;
 import com.gom.erp_system.models.enums.CustomerType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -39,4 +40,12 @@ public class Customer implements Serializable {
     private LocalDateTime registerDate;
     private boolean status;
 
+    public Customer(CreateCustomerDTO dto) {
+        this.name = dto.getName();
+        this.type = dto.getType();
+        this.documentNumber = getDocumentNumber();
+        this.email = dto.getEmail();
+        this.phone = dto.getPhone();
+        this.address = dto.getAddress();
+    }
 }
