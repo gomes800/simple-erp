@@ -43,7 +43,7 @@ public class Customer implements Serializable {
     public Customer(CreateCustomerDTO dto) {
         this.name = dto.getName();
         this.type = dto.getType();
-        this.documentNumber = getDocumentNumber();
+        this.documentNumber = dto.getDocumentNumber();
         this.email = dto.getEmail();
         this.phone = dto.getPhone();
         this.address = dto.getAddress();
