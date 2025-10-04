@@ -32,7 +32,7 @@ public class Customer implements Serializable {
     @Column(nullable = false)
     private CustomerType type;
 
-    private String CNPJ;
+    private String documentNumber;
     private String email;
     private String phone;
     private String address;
