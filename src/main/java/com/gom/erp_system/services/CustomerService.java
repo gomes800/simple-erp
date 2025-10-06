@@ -71,4 +71,10 @@ public class CustomerService {
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found."));
         customerRepository.delete(customer);
     }
+
+    public Page<CustomerResponseDTO> getCustomerByName(String name, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return customerRepository.findByNameContainingIgnoreCase(name, pageable)
+                .map(CustomerResponseDTO::fromEntity);
+    }
 }

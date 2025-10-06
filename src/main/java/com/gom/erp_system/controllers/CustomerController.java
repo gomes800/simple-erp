@@ -52,4 +52,12 @@ public class CustomerController {
         customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/find-by-name/{name}")
+    public ResponseEntity<Page<CustomerResponseDTO>> getCustomerByName(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @PathVariable String name) {
+        return ResponseEntity.ok(customerService.getCustomerByName(name, page, size));
+    }
 }
