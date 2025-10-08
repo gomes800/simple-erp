@@ -1,5 +1,6 @@
 package com.gom.erp_system.modules.products.model;
 
+import com.gom.erp_system.modules.products.model.dto.CreateProductDTO;
 import com.gom.erp_system.modules.products.model.enums.Categories;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -46,4 +47,16 @@ public class Product implements Serializable {
 
     private LocalDateTime registerDate;
     private String supplier;
+
+    public Product(CreateProductDTO dto) {
+        this.code = dto.getCode();
+        this.name = dto.getName();
+        this.description = dto.getDescription();
+        this.costPrice = dto.getCostPrice();
+        this.salePrice = dto.getSalePrice();
+        this.stock = dto.getStock();
+        this.minimumStock = dto.getMinimumStock();
+        this.category = dto.getCategory();
+        this.supplier = dto.getSupplier();
+    }
 }
