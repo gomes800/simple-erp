@@ -1,7 +1,7 @@
-package com.gom.erp_system.models;
+package com.gom.erp_system.modules.customers.model;
 
-import com.gom.erp_system.models.dto.CreateCustomerDTO;
-import com.gom.erp_system.models.enums.CustomerType;
+import com.gom.erp_system.modules.customers.model.dto.CreateCustomerDTO;
+import com.gom.erp_system.modules.customers.model.enums.CustomerType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

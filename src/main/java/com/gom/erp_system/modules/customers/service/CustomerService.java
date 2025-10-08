@@ -1,10 +1,10 @@
-package com.gom.erp_system.services;
+package com.gom.erp_system.modules.customers.service;
 
-import com.gom.erp_system.models.Customer;
-import com.gom.erp_system.models.dto.CreateCustomerDTO;
-import com.gom.erp_system.models.dto.CustomerResponseDTO;
-import com.gom.erp_system.models.dto.UpdateCustomerDTO;
-import com.gom.erp_system.repositories.CustomerRepository;
+import com.gom.erp_system.modules.customers.model.Customer;
+import com.gom.erp_system.modules.customers.model.dto.CreateCustomerDTO;
+import com.gom.erp_system.modules.customers.model.dto.CustomerResponseDTO;
+import com.gom.erp_system.modules.customers.model.dto.UpdateCustomerDTO;
+import com.gom.erp_system.modules.customers.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

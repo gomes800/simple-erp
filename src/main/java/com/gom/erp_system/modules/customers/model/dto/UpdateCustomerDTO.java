@@ -1,6 +1,6 @@
-package com.gom.erp_system.models.dto;
+package com.gom.erp_system.modules.customers.model.dto;
 
-import com.gom.erp_system.models.enums.CustomerType;
+import com.gom.erp_system.modules.customers.model.enums.CustomerType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

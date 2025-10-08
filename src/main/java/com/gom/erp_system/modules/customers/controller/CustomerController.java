@@ -1,16 +1,16 @@
-package com.gom.erp_system.controllers;
+package com.gom.erp_system.modules.customers.controller;
 
-import com.gom.erp_system.models.dto.CreateCustomerDTO;
-import com.gom.erp_system.models.dto.CustomerResponseDTO;
-import com.gom.erp_system.models.dto.UpdateCustomerDTO;
-import com.gom.erp_system.services.CustomerService;
+import com.gom.erp_system.modules.customers.model.dto.CreateCustomerDTO;
+import com.gom.erp_system.modules.customers.model.dto.CustomerResponseDTO;
+import com.gom.erp_system.modules.customers.model.dto.UpdateCustomerDTO;
+import com.gom.erp_system.modules.customers.service.CustomerService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/api/customer")
 public class CustomerController {
 
     private final CustomerService customerService;
