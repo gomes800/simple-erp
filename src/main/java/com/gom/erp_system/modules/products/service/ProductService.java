@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
@@ -73,4 +74,26 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException("Product not found."));
         productRepository.delete(product);
     }
+
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDTO> getLowStockProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return productRepository.findProductsWithLowStock(pageable)
+                .map(ProductResponseDTO::fromEntity);
+    }
+
+    public ProductResponseDTO updateSalePrice(Long id, BigDecimal newSalePrice) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found."));
+
+        if (newSalePrice == null || newSalePrice.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Sale price must be greater than zero.");
+        }
+        product.setSalePrice(newSalePrice);
+        productRepository.save(product);
+
+        return ProductResponseDTO.fromEntity(product);
+    }
+
 }
