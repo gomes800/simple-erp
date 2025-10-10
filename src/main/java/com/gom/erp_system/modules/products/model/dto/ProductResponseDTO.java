@@ -2,6 +2,7 @@ package com.gom.erp_system.modules.products.model.dto;
 
 import com.gom.erp_system.modules.products.model.Product;
 import com.gom.erp_system.modules.products.model.enums.Categories;
+import com.gom.erp_system.modules.suppliers.model.dto.SupplierResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +26,7 @@ public class ProductResponseDTO {
     private Integer minimumStock;
     private Categories category;
     private LocalDateTime registerDate;
-    private String supplier;
+    private SupplierResponseDTO supplier;
 
     public static ProductResponseDTO fromEntity(Product product) {
         return ProductResponseDTO.builder()
@@ -39,7 +40,7 @@ public class ProductResponseDTO {
                 .minimumStock(product.getMinimumStock())
                 .category(product.getCategory())
                 .registerDate(product.getRegisterDate())
-                .supplier(product.getSupplier())
+                .supplier(SupplierResponseDTO.fromEntity(product.getSupplier()))
                 .build();
     }
 }

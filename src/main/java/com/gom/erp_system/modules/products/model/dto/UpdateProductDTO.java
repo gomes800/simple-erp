@@ -23,5 +23,5 @@ public class UpdateProductDTO {
     private Integer stock;
     private Integer minimumStock;
     private Categories category;
-    private String supplier;
+    private Long supplierId;
 }

@@ -1,7 +1,9 @@
 package com.gom.erp_system.modules.products.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.gom.erp_system.modules.products.model.dto.CreateProductDTO;
 import com.gom.erp_system.modules.products.model.enums.Categories;
+import com.gom.erp_system.modules.suppliers.model.Supplier;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -46,7 +48,11 @@ public class Product implements Serializable {
     private Categories category;
 
     private LocalDateTime registerDate;
-    private String supplier;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_id")
+    @JsonBackReference
+    private Supplier supplier;
 
     public Product(CreateProductDTO dto) {
         this.code = dto.getCode();
@@ -57,6 +63,5 @@ public class Product implements Serializable {
         this.stock = dto.getStock();
         this.minimumStock = dto.getMinimumStock();
         this.category = dto.getCategory();
-        this.supplier = dto.getSupplier();
     }
 }
