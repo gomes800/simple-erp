@@ -5,6 +5,8 @@ import com.gom.erp_system.modules.products.model.dto.CreateProductDTO;
 import com.gom.erp_system.modules.products.model.dto.ProductResponseDTO;
 import com.gom.erp_system.modules.products.model.dto.UpdateProductDTO;
 import com.gom.erp_system.modules.products.repository.ProductRepository;
+import com.gom.erp_system.modules.suppliers.model.Supplier;
+import com.gom.erp_system.modules.suppliers.repository.SupplierRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +22,11 @@ import java.time.LocalDateTime;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final SupplierRepository supplierRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, SupplierRepository supplierRepository) {
         this.productRepository = productRepository;
+        this.supplierRepository = supplierRepository;
     }
 
     @Transactional(readOnly = true)
@@ -43,8 +47,12 @@ public class ProductService {
     }
 
     public ProductResponseDTO createProduct(CreateProductDTO dto) {
+        Supplier supplier = supplierRepository.findById(dto.getSupplierId())
+                .orElseThrow(() -> new EntityNotFoundException("Supplier not found."));
+
         Product newProduct = new Product(dto);
         newProduct.setRegisterDate(LocalDateTime.now());
+        newProduct.setSupplier(supplier);
 
         productRepository.save(newProduct);
 
@@ -54,6 +62,7 @@ public class ProductService {
     public ProductResponseDTO updateProduct(Long id, UpdateProductDTO dto) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found."));
+
         if (dto.getCode() != null) product.setCode(dto.getCode());
         if (dto.getName() != null) product.setName(dto.getName());
         if (dto.getDescription() != null) product.setDescription(dto.getDescription());
@@ -62,7 +71,11 @@ public class ProductService {
         if (dto.getStock() != null) product.setStock(dto.getStock());
         if (dto.getMinimumStock() != null) product.setMinimumStock(dto.getMinimumStock());
         if (dto.getCategory() != null) product.setCategory(dto.getCategory());
-        if (dto.getSupplier() != null) product.setSupplier(dto.getSupplier());
+        if (dto.getSupplierId() != null) {
+            Supplier supplier = supplierRepository.findById(dto.getSupplierId())
+                    .orElseThrow(() -> new EntityNotFoundException("Supplier not found."));
+            product.setSupplier(supplier);
+        }
 
         productRepository.save(product);
 
