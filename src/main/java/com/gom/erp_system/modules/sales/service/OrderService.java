@@ -36,7 +36,12 @@ public class OrderService {
         }
 
         return products.stream()
-                .map(p -> p.getUnitPrice().multiply(BigDecimal.valueOf(p.getQuantity())))
+                .map(p -> {
+                    Product product = productRepository.findById(p.getProductId())
+                            .orElseThrow(() -> new RuntimeException("Product not found: " + p.getProductId()));
+                    return product.getSalePrice().multiply(BigDecimal.valueOf(p.getQuantity()));
+
+                })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
