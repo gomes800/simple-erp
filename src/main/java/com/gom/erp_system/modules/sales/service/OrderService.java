@@ -9,15 +9,21 @@ import com.gom.erp_system.modules.sales.model.OrderProduct;
 import com.gom.erp_system.modules.sales.model.dto.CreateOrderDTO;
 import com.gom.erp_system.modules.sales.model.dto.OrderProductDTO;
 import com.gom.erp_system.modules.sales.model.dto.OrderResponseDTO;
+import com.gom.erp_system.modules.sales.model.dto.UpdateOrderDTO;
+import com.gom.erp_system.modules.sales.model.enums.OrderStatus;
+import com.gom.erp_system.modules.sales.model.exception.InvalidOrderStateException;
 import com.gom.erp_system.modules.sales.repository.OrderRepository;
+import com.gom.erp_system.utils.EntityFinder;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -28,6 +34,13 @@ public class OrderService {
         this.orderRepository = orderRepository;
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public OrderResponseDTO getOrderById(Long id) {
+        Order order = EntityFinder.findOrThrow(orderRepository, id, "Order");
+
+        return OrderResponseDTO.fromEntity(order);
     }
 
     private BigDecimal calculateTotalValue(List<OrderProductDTO> products) {
@@ -59,13 +72,11 @@ public class OrderService {
     }
 
     public OrderResponseDTO createOrder(CreateOrderDTO dto) {
-        Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found."));
+        Customer customer = EntityFinder.findOrThrow(customerRepository, dto.getCustomerId(), "Customer");
 
         List<OrderProduct> orderProducts = dto.getProducts().stream()
                 .map(p -> {
-                    Product product = productRepository.findById(p.getProductId())
-                            .orElseThrow(() -> new EntityNotFoundException("Product not found."));
+                    Product product = EntityFinder.findOrThrow(productRepository, p.getProductId(), "Product");
                     return new OrderProduct(product, p.getQuantity());
                 })
                 .collect(Collectors.toUnmodifiableList());
@@ -76,5 +87,30 @@ public class OrderService {
         orderRepository.save(order);
 
         return OrderResponseDTO.fromEntity(order);
+    }
+
+    public OrderResponseDTO updateOrder(Long id, UpdateOrderDTO dto) {
+        Order order = EntityFinder.findOrThrow(orderRepository, id, "Order");
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new InvalidOrderStateException("Can't edit this order because it's not pending.");
+        }
+
+        if (dto.getCustomerId() != null) {
+            Customer customer = customerRepository.findById(dto.getCustomerId())
+                    .orElseThrow(() -> new EntityNotFoundException("Customer not found."));
+            order.setCustomer(customer);
+        }
+
+        if (dto.getDiscount() != null) order.setDiscount(dto.getDiscount());
+        if (dto.getObservations() != null) order.setObservations(dto.getObservations());
+
+        orderRepository.save(order);
+        return OrderResponseDTO.fromEntity(order);
+    }
+
+    public void deleteOrder(Long id) {
+        Order order = EntityFinder.findOrThrow(orderRepository, id, "Order");
+        orderRepository.delete(order);
     }
 }
