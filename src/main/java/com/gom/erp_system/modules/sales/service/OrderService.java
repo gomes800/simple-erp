@@ -15,6 +15,9 @@ import com.gom.erp_system.modules.sales.model.exception.InvalidOrderStateExcepti
 import com.gom.erp_system.modules.sales.repository.OrderRepository;
 import com.gom.erp_system.utils.EntityFinder;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +44,13 @@ public class OrderService {
         Order order = EntityFinder.findOrThrow(orderRepository, id, "Order");
 
         return OrderResponseDTO.fromEntity(order);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderResponseDTO> getAllOrders(int page, int size ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return  orderRepository.findAll(pageable)
+                .map(OrderResponseDTO::fromEntity);
     }
 
     private BigDecimal calculateTotalValue(List<OrderProductDTO> products) {
@@ -82,6 +92,7 @@ public class OrderService {
                 .collect(Collectors.toUnmodifiableList());
 
         Order order = new Order(dto, customer,orderProducts);
+        order.setStatus(OrderStatus.PENDING);
         order.setTotalValue(calculateTotalValue(dto.getProducts()));
 
         orderRepository.save(order);
