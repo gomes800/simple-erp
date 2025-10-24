@@ -5,8 +5,10 @@ import com.gom.erp_system.modules.products.model.dto.CreateProductDTO;
 import com.gom.erp_system.modules.products.model.dto.ProductResponseDTO;
 import com.gom.erp_system.modules.products.model.dto.UpdateProductDTO;
 import com.gom.erp_system.modules.products.repository.ProductRepository;
+import com.gom.erp_system.modules.sales.model.exception.InsufficientStockException;
 import com.gom.erp_system.modules.suppliers.model.Supplier;
 import com.gom.erp_system.modules.suppliers.repository.SupplierRepository;
+import com.gom.erp_system.utils.EntityFinder;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -82,7 +84,7 @@ public class ProductService {
         return ProductResponseDTO.fromEntity(product);
     }
 
-    public void deleteProdutc(Long id) {
+    public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found."));
         productRepository.delete(product);
@@ -109,4 +111,16 @@ public class ProductService {
         return ProductResponseDTO.fromEntity(product);
     }
 
+    public Product decreaseStock(Long productId, Integer quantity) {
+        Product product = EntityFinder.findOrThrow(productRepository, productId, "Product");
+
+        if (product.getStock() < quantity) {
+            throw new InsufficientStockException("Out of stock for product: " + product.getName());
+        }
+
+        product.setStock(product.getStock() - quantity);
+        productRepository.save(product);
+
+        return product;
+    }
 }

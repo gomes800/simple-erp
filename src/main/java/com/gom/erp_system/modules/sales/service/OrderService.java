@@ -4,6 +4,7 @@ import com.gom.erp_system.modules.customers.model.Customer;
 import com.gom.erp_system.modules.customers.repository.CustomerRepository;
 import com.gom.erp_system.modules.products.model.Product;
 import com.gom.erp_system.modules.products.repository.ProductRepository;
+import com.gom.erp_system.modules.products.service.ProductService;
 import com.gom.erp_system.modules.sales.model.Order;
 import com.gom.erp_system.modules.sales.model.OrderProduct;
 import com.gom.erp_system.modules.sales.model.dto.CreateOrderDTO;
@@ -32,11 +33,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository, ProductRepository productRepository) {
+    public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository, ProductRepository productRepository, ProductService productService) {
         this.orderRepository = orderRepository;
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
+        this.productService = productService;
     }
 
     @Transactional(readOnly = true)
@@ -86,7 +89,8 @@ public class OrderService {
 
         List<OrderProduct> orderProducts = dto.getProducts().stream()
                 .map(p -> {
-                    Product product = EntityFinder.findOrThrow(productRepository, p.getProductId(), "Product");
+                    Product product = productService.decreaseStock(p.getProductId(), p.getQuantity());
+
                     return new OrderProduct(product, p.getQuantity());
                 })
                 .collect(Collectors.toUnmodifiableList());
