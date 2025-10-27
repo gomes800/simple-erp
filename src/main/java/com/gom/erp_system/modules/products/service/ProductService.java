@@ -123,4 +123,15 @@ public class ProductService {
 
         return product;
     }
+
+    public ProductResponseDTO updateStock(Long productId, Integer quantity){
+        Product product = EntityFinder.findOrThrow(productRepository, productId, "Product");
+        if (quantity == null || quantity < 0) {
+            throw new IllegalArgumentException("Invalid quantity");
+        }
+        product.setStock(quantity);
+        productRepository.save(product);
+
+        return ProductResponseDTO.fromEntity(product);
+    }
 }

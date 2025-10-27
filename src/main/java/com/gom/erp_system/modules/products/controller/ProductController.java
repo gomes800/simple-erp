@@ -55,7 +55,7 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        productService.deleteProdutc(id);
+        productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -75,5 +75,12 @@ public class ProductController {
         ProductResponseDTO updated = productService.updateSalePrice(id, newSalePrice);
         
         return ResponseEntity.ok(updated);
+    }
+
+    @PatchMapping("/stock/{id}")
+    public ResponseEntity<ProductResponseDTO> updateStock(
+            @PathVariable Long id,
+            @RequestParam Integer quantity ) {
+        return ResponseEntity.ok(productService.updateStock(id, quantity));
     }
 }
